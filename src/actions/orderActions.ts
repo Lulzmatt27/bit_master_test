@@ -16,6 +16,7 @@ export const createOrder = () => async (dispatch: any,getState: any) => {
         clientInfo: addresses
       }
     } = getState()
+
     dispatch({
       type: ORDER_REQUEST,
       payload: {
@@ -25,11 +26,14 @@ export const createOrder = () => async (dispatch: any,getState: any) => {
         }
       }
     })
+
     const response = await generateResponseOrder();
+    console.log('response',response);
     dispatch({
       type: ORDER_SUCCESS,
       payload: response
     })
+
   }
   catch(error) {
     console.error('error',error);

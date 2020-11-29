@@ -33,6 +33,14 @@ export const generateSourceTime = (): string => {
 export const generateCrews = (lat: number,lon: number) => {
   const crews = []
   for(let i = 1; i <= 4; i += 1) {
+    let randLat = lat;
+    let randLon = lon;
+    if(i % 2) {
+      randLat = lat + i * 0.0033
+    }
+    else {
+      randLon = lon + i * 0.0033
+    }
     let crew = {
       crew_id: i,
       car_mark: carMarks[i - 1],
@@ -41,8 +49,8 @@ export const generateCrews = (lat: number,lon: number) => {
       car_number: carNumber[i - 1],
       driver_name: 'Деточкин',
       driver_phone: '123123',
-      lat: lat + 0.0003,
-      lon: lon + 0.0003,
+      lat: randLat,
+      lon: randLon,
       distance: 300 * i
     }
     crews.push(crew);

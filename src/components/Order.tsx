@@ -1,24 +1,30 @@
 import React from 'react'
-import {InputGroup,Card,Badge,Row} from 'react-bootstrap'
-const Order = () => {
+import {getColorByName} from '../utils'
+import {InputGroup,Card,Badge,Row,Col} from 'react-bootstrap'
+const Order: React.FC<{car: any,suitableScrew: boolean}> = ({car,suitableScrew}) => {
   return (
     <InputGroup>
       <InputGroup.Prepend>
         <InputGroup.Text id="basic-addon1">Подходящий экипаж</InputGroup.Text>
       </InputGroup.Prepend>
-      <Card>
-        <Card.Body>
-          <Row>
-            <span>Модель машины</span>
-          </Row>
-          <Row>
-            <span>цвет</span>
-          </Row>
-          <Row>
-            <Badge>номер машины</Badge>
-          </Row>
-        </Card.Body>
-      </Card>
+      <Col md='8'>
+        <Card>
+          <Card.Body >
+            <Row>
+              <span>{suitableScrew ? `${car.car_mark} ${car.car_model}` : '---'}</span>
+            </Row>
+            <Row>
+              {suitableScrew ? (<span style={{
+                color: getColorByName(car.car_color)
+              }}>{car.car_color}</span>) : ''}
+            </Row>
+            <Row>
+              {suitableScrew ? <Badge pill variant='secondary'>{car.car_number}</Badge>
+                : '---'}
+            </Row>
+          </Card.Body>
+        </Card>
+      </Col>
     </InputGroup>
   )
 }

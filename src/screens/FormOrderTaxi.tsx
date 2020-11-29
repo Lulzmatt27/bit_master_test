@@ -1,6 +1,6 @@
 import React,{useRef,useState} from 'react'
 import {Row,Col,Button,InputGroup,FormControl,Form} from 'react-bootstrap'
-import {YMaps,Map,Placemark} from 'react-yandex-maps'
+import {YMaps,Map,Placemark,GeoObject} from 'react-yandex-maps'
 import {useDispatch,useSelector} from 'react-redux'
 import {searchCrew} from '../actions/crewActions'
 import {createOrder} from '../actions/orderActions'
@@ -52,13 +52,15 @@ const FormOrderTaxi = () => {
     }
   }
 
-  const getAddress = async (coord: number[]) => {
-
-  }
-
   const placeMarkChangePosition = (e: any) => {
-    console.log(e.get('target'));
-    setMarkerCoord(e.get('target').geometry.getCoordinates())
+    setMarkerCoord(e.get("coords"))
+    ymaps.geocode(e.get("coords")).then(function(res: any) {
+      var firstGeoObject = res.geoObjects.get(0);
+      console.log(firstGeoObject.getAddressLine())
+      const address = firstGeoObject.getAddressLine().split(',').slice(-2);
+      addressInput.current.value = address.join(',')
+      getCoord(addressInput.current.value)
+    });
   }
 
   const changeAddressHandler = () => {
@@ -105,18 +107,16 @@ const FormOrderTaxi = () => {
         </Row>
         <Row className='my-2'>
           <Col md='8'>
-            <Order />
+            <Order car={crewInfo?.data?.crews_info[0]} suitableScrew={crewInfo?.data?.crews_info} />
           </Col>
         </Row>
         <Row className='my-2 middle-menu'>
           <Col className='my-2' md='8'>
             <YMaps query={{apikey: 'fea49649-ef41-4d29-9134-57092fd452c8',load: 'control.ZoomControl'}} >
-              <Map state={{center: mapCoord,zoom: 17}} defaultState={{center: [54.7348,55.9579],zoom: 17}}
-                width="100%" height="100%" onLoad={onYMapLoad} modules={['geocode']} >
-                <Placemark defaultGeometry={[54.7348,55.9579]} options={{iconColor: '#FFCC00',draggable: true,}} geometry={markerCoord} onDragEnd={placeMarkChangePosition} />
-                {/* {crewInfo?.data?.crews_info.map((crew: any) => ( */}
-                {/* <Placemark key={crew.crew_id} geometry={[crew.lat,crew.lon]} /> */}
-                {/* ))} */}
+              <Map state={{center: mapCoord,zoom: 15}} defaultState={{center: [54.7348,55.9579],zoom: 17}}
+                width="100%" height="100%" onLoad={onYMapLoad} modules={['geocode']} onClick={placeMarkChangePosition}>
+                <Placemark defaultGeometry={[54.7348,55.9579]} options={{iconColor: '#FFCC00'}} geometry={markerCoord} />
+                {crewInfo?.data?.crews_info.map((crew: any) => (<Placemark key={crew.crew_id} options={{iconColor: '#00FF00'}} geometry={[crew.lat,crew.lon]} />))}
               </Map>
             </YMaps>
           </Col>
@@ -124,10 +124,11 @@ const FormOrderTaxi = () => {
             {loading ? <Loader /> : (
               <ListCars cars={crewInfo?.data?.crews_info} />
             )}
+
           </Col>
         </Row>
         <Row className='my-2'>
-          <Button variant='primary' type='submit' block disabled={order?.loading && invalidAddress} >Заказать</Button>
+          <Button variant='primary' type='submit' block disabled={order?.loading || invalidAddress} >Заказать</Button>
         </Row>
         <Row className='my-2' style={{justifyContent: 'center'}}>
           {(order?.orderInfo?.code === 0) ? <span style={{color: '#50c878'}}>Заказ успешно создан с id {order.orderInfo.data.order_id}</span> : null}
