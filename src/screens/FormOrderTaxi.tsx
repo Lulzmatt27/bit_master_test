@@ -38,7 +38,6 @@ const FormOrderTaxi = () => {
     try {
       const result = await ymaps.geocode(address)
       const coord = result.geoObjects.get(0).geometry.getCoordinates();
-      console.log('coord',coord);
       setMarkerCoord(coord)
       setMapCoord(coord)
       dispatch(searchCrew(address,coord[0],coord[1]))
@@ -56,7 +55,6 @@ const FormOrderTaxi = () => {
     setMarkerCoord(e.get("coords"))
     ymaps.geocode(e.get("coords")).then(function(res: any) {
       var firstGeoObject = res.geoObjects.get(0);
-      console.log(firstGeoObject.getAddressLine())
       const address = firstGeoObject.getAddressLine().split(',').slice(-2);
       addressInput.current.value = address.join(',')
       getCoord(addressInput.current.value)

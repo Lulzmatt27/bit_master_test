@@ -8,9 +8,7 @@ import {
 
 export const createOrder = () => async (dispatch: any,getState: any) => {
   try {
-    console.log('getState',getState)
     const source_time = generateSourceTime();
-    console.log('getState()',getState())
     const {crew:
       {
         clientInfo: addresses
@@ -28,7 +26,6 @@ export const createOrder = () => async (dispatch: any,getState: any) => {
     })
 
     const response = await generateResponseOrder();
-    console.log('response',response);
     dispatch({
       type: ORDER_SUCCESS,
       payload: response
