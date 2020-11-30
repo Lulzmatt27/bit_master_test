@@ -13,6 +13,9 @@
 - react-bootstrap
 - bootstrap
 
+## Интерфейс
+![](test_screens/main_menu.png)
+
 ## Команды для сборки
 ### `yarn start`
 

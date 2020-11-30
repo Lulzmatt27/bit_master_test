@@ -1,6 +1,6 @@
 import React,{useRef,useState} from 'react'
 import {Row,Col,Button,InputGroup,FormControl,Form} from 'react-bootstrap'
-import {YMaps,Map,Placemark,GeoObject} from 'react-yandex-maps'
+import {YMaps,Map,Placemark} from 'react-yandex-maps'
 import {useDispatch,useSelector} from 'react-redux'
 import {searchCrew} from '../actions/crewActions'
 import {createOrder} from '../actions/orderActions'
@@ -8,12 +8,7 @@ import Order from '../components/Order'
 import Error from '../components/Error'
 import ListCars from '../components/ListCars'
 import Loader from '../components/Loader'
-interface IMarker {
-  text: string,
-  lat?: number,
-  lng?: number
-}
-// const AnyReactComponent: React.FC<IMarker> = ({text,lat,lng}) => <div>{text}</div>;
+
 interface ISelector {
   [key: string]: any
 }
@@ -61,27 +56,33 @@ const FormOrderTaxi = () => {
     });
   }
 
+  // простая проверка без regexp
+  const validateAddressLength = () => {
+    const address = addressInput.current?.value.split(',');
+    return Array.isArray(address) && address.length === 2 && address[1] > 0
+  }
+
   const changeAddressHandler = () => {
     if(typingTimeout) {
       clearTimeout(typingTimeout)
     }
-
     setTypingTimeout((time: any) => {
       return setTimeout(() => {
-        // простая проверка без regexp
-        const address = addressInput.current.value.split(',');
-        if(address.length === 2) {
+        if(validateAddressLength()) {
           getCoord(addressInput.current.value)
         }
       },2000)
     })
   }
 
+
+
   const orderTaxi = (e: React.SyntheticEvent) => {
     e.preventDefault();
     dispatch(createOrder())
   }
   const {crewInfo,loading} = crew;
+  const addressIsValid = validateAddressLength();
   return (
     <div>
       <Form onSubmit={orderTaxi}>
@@ -126,7 +127,7 @@ const FormOrderTaxi = () => {
           </Col>
         </Row>
         <Row className='my-2'>
-          <Button variant='primary' type='submit' block disabled={order?.loading || invalidAddress} >Заказать</Button>
+          <Button variant='primary' type='submit' block disabled={order?.loading || invalidAddress || !addressIsValid} >Заказать</Button>
         </Row>
         <Row className='my-2' style={{justifyContent: 'center'}}>
           {(order?.orderInfo?.code === 0) ? <span style={{color: '#50c878'}}>Заказ успешно создан с id {order.orderInfo.data.order_id}</span> : null}
