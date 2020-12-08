@@ -1,11 +1,11 @@
+import {Dispatch} from 'redux';
 import {generateSourceTime,generateCrews} from './../utils/index';
-import {format} from 'date-fns'
 import {
   CREWS_SEARCH,CREWS_FOUND,CREWS_RESET
 } from '../constants/crewConstants';
+import type * as Types from '../Types';
 
-export const searchCrew = (address: string,lat: number,lon: number) => async (dispatch: any) => {
-
+export const searchCrew = (address: string,lat: number,lon: number) => async (dispatch: Dispatch<Types.ISearchCrew>) => {
   const clientInfo = {
     source_time: generateSourceTime(),
     addresses: [
@@ -19,18 +19,16 @@ export const searchCrew = (address: string,lat: number,lon: number) => async (di
   dispatch({
     type: CREWS_SEARCH,
     payload: {...clientInfo}
-
   })
-  // API REQUEST TO YANDEX API
-  const crewsInfo: any = await generateCrews(lat,lon);
+
+  const crewsInfo: Types.ICrewsInfo = await generateCrews(lat,lon);
   dispatch({
     type: CREWS_FOUND,
-    payload: {...crewsInfo}
-
+    payload: crewsInfo
   })
 }
 
-export const invalidSearch = () => (dispatch: any) => {
+export const invalidSearch = () => (dispatch: Dispatch<Types.ISearchCrew>) => {
   dispatch({
     type: CREWS_RESET
   })

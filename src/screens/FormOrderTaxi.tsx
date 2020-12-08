@@ -8,6 +8,7 @@ import Order from '../components/Order'
 import Error from '../components/Error'
 import ListCars from '../components/ListCars'
 import Loader from '../components/Loader'
+import type * as Types from '../Types'
 
 interface ISelector {
   [key: string]: any
@@ -41,7 +42,6 @@ const FormOrderTaxi = () => {
       }
     }
     catch(error) {
-
       setInvalidAddress(true);
     }
   }
@@ -49,24 +49,26 @@ const FormOrderTaxi = () => {
   const placeMarkChangePosition = (e: any) => {
     setMarkerCoord(e.get("coords"))
     ymaps.geocode(e.get("coords")).then(function(res: any) {
-      var firstGeoObject = res.geoObjects.get(0);
+      const firstGeoObject = res.geoObjects.get(0);
       const address = firstGeoObject.getAddressLine().split(',').slice(-2);
       addressInput.current.value = address.join(',')
       getCoord(addressInput.current.value)
     });
   }
-
   // простая проверка без regexp
   const validateAddressLength = () => {
     const address = addressInput.current?.value.split(',');
-    return Array.isArray(address) && address.length === 2 && address[1] > 0
+    if(address?.length) {
+      return address.length === 2 && address[1] > 0
+    }
+    return false;
   }
 
   const changeAddressHandler = () => {
     if(typingTimeout) {
       clearTimeout(typingTimeout)
     }
-    setTypingTimeout((time: any) => {
+    setTypingTimeout(() => {
       return setTimeout(() => {
         if(validateAddressLength()) {
           getCoord(addressInput.current.value)
@@ -75,14 +77,14 @@ const FormOrderTaxi = () => {
     })
   }
 
-
-
   const orderTaxi = (e: React.SyntheticEvent) => {
     e.preventDefault();
     dispatch(createOrder())
   }
+
   const {crewInfo,loading} = crew;
   const addressIsValid = validateAddressLength();
+
   return (
     <div>
       <Form onSubmit={orderTaxi}>
@@ -93,7 +95,7 @@ const FormOrderTaxi = () => {
                 <InputGroup.Text id="basic-addon1">Откуда</InputGroup.Text>
               </InputGroup.Prepend>
               <FormControl
-                placeholder="Адрес"
+                placeholder="Адрес, дом"
                 aria-label="address"
                 aria-describedby="basic-addon1"
                 ref={addressInput}
@@ -115,7 +117,7 @@ const FormOrderTaxi = () => {
               <Map state={{center: mapCoord,zoom: 15}} defaultState={{center: [54.7348,55.9579],zoom: 17}}
                 width="100%" height="100%" onLoad={onYMapLoad} modules={['geocode']} onClick={placeMarkChangePosition}>
                 <Placemark defaultGeometry={[54.7348,55.9579]} options={{iconColor: '#FFCC00'}} geometry={markerCoord} />
-                {crewInfo?.data?.crews_info.map((crew: any) => (<Placemark key={crew.crew_id} options={{iconColor: '#00FF00'}} geometry={[crew.lat,crew.lon]} />))}
+                {crewInfo?.data?.crews_info.map((crew: Types.Crew) => (<Placemark key={crew.crew_id} options={{iconColor: '#00FF00'}} geometry={[crew.lat,crew.lon]} />))}
               </Map>
             </YMaps>
           </Col>
@@ -123,14 +125,13 @@ const FormOrderTaxi = () => {
             {loading ? <Loader /> : (
               <ListCars cars={crewInfo?.data?.crews_info} />
             )}
-
           </Col>
         </Row>
         <Row className='my-2'>
           <Button variant='primary' type='submit' block disabled={order?.loading || invalidAddress || !addressIsValid} >Заказать</Button>
         </Row>
-        <Row className='my-2' style={{justifyContent: 'center'}}>
-          {(order?.orderInfo?.code === 0) ? <span style={{color: '#50c878'}}>Заказ успешно создан с id {order.orderInfo.data.order_id}</span> : null}
+        <Row className='my-2 order-info'>
+          {(order?.orderInfo?.code === 0) ? <span className='order-info__order-success'>Заказ успешно создан с id {order.orderInfo.data.order_id}</span> : null}
         </Row>
       </Form>
     </div>

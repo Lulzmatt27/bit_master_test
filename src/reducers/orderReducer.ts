@@ -1,16 +1,9 @@
 import {
   ORDER_REQUEST,ORDER_SUCCESS,ORDER_ERROR,
 } from '../constants/orderConstants';
-interface IState {
+import type * as Types from '../Types';
 
-}
-interface IAction {
-  type: string,
-  payload?: any
-}
-
-
-export const orderReducer = (state = {},action: IAction) => {
+export const orderReducer = (state = {},action: Types.IOrder) => {
   switch(action.type) {
     case ORDER_REQUEST:
       return {

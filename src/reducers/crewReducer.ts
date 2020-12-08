@@ -1,16 +1,9 @@
 import {
   CREWS_SEARCH,CREWS_FOUND,CREWS_RESET
 } from '../constants/crewConstants';
-interface IState {
+import type * as Types from '../Types'
 
-}
-interface IAction {
-  type: string,
-  payload?: any
-}
-
-
-export const crewReducer = (state = {},action: IAction) => {
+export const crewReducer = (state = {},action: Types.ISearchCrew) => {
   switch(action.type) {
     case CREWS_SEARCH:
       return {

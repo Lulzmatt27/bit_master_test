@@ -2,7 +2,7 @@ import React from 'react';
 import {Container} from 'react-bootstrap'
 import Header from './components/Header'
 import FormOrderTaxi from './screens/FormOrderTaxi'
-import './App.css';
+import './App.scss';
 
 function App() {
   return (

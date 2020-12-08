@@ -1,37 +1,33 @@
 import {format} from 'date-fns'
+import type * as Types from '../Types'
 const carMarks = ['Chevrolet','Toyota','Ford','BMW']
 const carModel = ['Chevrolet','Corolla','Mustang','x5']
-const carColor = ['Синий','Красный','Зеленый','Черный']
+const carColor = ['Blue','Red','Green','Black']
 const carNumber = ['Е234КУ','У224КУ','О000ОК','В999ВК']
-
-
-export const getColorByName = (colorName: string): string => {
-  switch(colorName) {
-    case 'Синий':
-      return '#0000ff'
-    case 'Красный':
-      return '#ff0000'
-    case 'Зеленый':
-      return '#00ff00'
-    case 'Черный':
-      return '#000000'
-    default:
-      return '000000'
-  }
+interface ColorType {
+  [key: string]: string
 }
+const colorObj: ColorType = {
+  Blue: '#0000ff',
+  Red: '#ff0000',
+  Green: '#00ff00',
+  Black: '#000000',
+}
+
+export const getColorByName = (colorName: string): string => colorObj[colorName];
 /**
  * descr генерирует строку формата ГГГГММДДччммсс по текущей дате new Date()
  */
-export const generateSourceTime = (): string => {
-  return format(new Date(),'yyyyMMddHHmmss')
-}
+export const generateSourceTime = (): string => format(new Date(),'yyyyMMddHHmmss')
+
 /**
  * lat: number,
  * lon: number
  * генерирует список экипажей
  */
-export const generateCrews = (lat: number,lon: number) => {
-  const crews = []
+export const generateCrews = (lat: number,lon: number): Promise<Types.ICrewsInfo> => {
+  const crews: Types.Crew[] = []
+
   for(let i = 1; i <= 4; i += 1) {
     let randLat = lat;
     let randLon = lon;
@@ -41,7 +37,7 @@ export const generateCrews = (lat: number,lon: number) => {
     else {
       randLon = lon + i * 0.0033
     }
-    let crew = {
+    const crew = {
       crew_id: i,
       car_mark: carMarks[i - 1],
       car_model: carModel[i - 1],
@@ -65,7 +61,7 @@ export const generateCrews = (lat: number,lon: number) => {
     }
     return 0
   })
-  const responseObj = {
+  const responseObj: Types.ICrewsInfo = {
     code: 0,
     descr: "OK",
     data: {
@@ -73,15 +69,15 @@ export const generateCrews = (lat: number,lon: number) => {
     }
   }
 
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve,_) => {
     setTimeout(() => {
       resolve(responseObj)
     },1000)
   })
 }
 
-export const generateResponseOrder = () => {
-  return new Promise((resolve,reject) => {
+export const generateResponseOrder = (): Promise<Types.IOrderSuccess> => {
+  return new Promise((resolve,_) => {
     setTimeout(() => {
       resolve(
         {

@@ -1,12 +1,10 @@
+import {Dispatch} from 'redux';
 import {generateSourceTime,generateResponseOrder} from './../utils/index';
-
 import {
   ORDER_REQUEST,ORDER_SUCCESS,ORDER_ERROR
 } from '../constants/orderConstants';
-
-
-
-export const createOrder = () => async (dispatch: any,getState: any) => {
+import type * as Types from '../Types';
+export const createOrder = () => async (dispatch: Dispatch<Types.IOrder>,getState: any) => {
   try {
     const source_time = generateSourceTime();
     const {crew:
@@ -25,12 +23,11 @@ export const createOrder = () => async (dispatch: any,getState: any) => {
       }
     })
 
-    const response = await generateResponseOrder();
+    const response: Types.IOrderSuccess = await generateResponseOrder();
     dispatch({
       type: ORDER_SUCCESS,
       payload: response
     })
-
   }
   catch(error) {
     console.error('error',error);

@@ -1,0 +1,12 @@
+.middle-menu{
+  min-height: 450px;
+}
+.error-color{
+  color: '#ff6347'
+}
+.order-info{
+  justify-content: center;
+  &__order-success{
+    color: #50c878
+  }
+}

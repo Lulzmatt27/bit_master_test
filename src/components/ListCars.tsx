@@ -1,9 +1,8 @@
 import React from 'react'
 import {ListGroup,Row,Col} from 'react-bootstrap';
 import {getColorByName} from '../utils';
-import {List} from 'react-bootstrap/lib/Media';
+
 const ListCars: React.FC<{cars: any[]}> = ({cars}) => {
-  console.log('cars',cars)
   return (
     <ListGroup>
       {cars ? cars.map(car => (
